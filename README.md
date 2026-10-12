@@ -1,142 +1,59 @@
-# practica_talendig_mes4_sem2_gimnasio
+# 🏋️ Limpieza de datos — Clientes de un gimnasio
 
-# Gym Data Cleaning and Exploratory Data Analysis
+Práctica de **limpieza de datos y análisis exploratorio** sobre el registro de clientes de un gimnasio con tres sedes en Santo Domingo (**Naco, Piantini y Gazcue**). Desarrollada en el **Mes 4 · Semana 2** de *Data Science para IA* (Talendig).
 
-A Python data analysis project focused on data cleaning, missing-value treatment, duplicate detection, statistical analysis, and exploratory data analysis (EDA) using a gym customer dataset.
+El dataset llega con problemas típicos de datos reales: información incompleta, registros repetidos por error y una columna numérica que en realidad es una categoría. El objetivo es resolver cada uno **justificando la decisión**, no solo aplicando código.
 
-This project was developed as part of my Python and data analysis training at **Talendig** (Month 4, Week 2) and further organized and documented for my learning portfolio.
+## 📓 Notebook
+👉 [`notebooks/01_limpieza_datos.ipynb`](notebooks/01_limpieza_datos.ipynb)
 
-## Project Overview
+## 🔍 Qué se hace
 
-The dataset contains customer records from a gym with three branches in Santo Domingo, Dominican Republic: Naco, Piantini, and Gazcue.
+| Problema | Decisión | Por qué |
+|---|---|---|
+| `Edad` con 17.46 % de nulos | Rellenar con la **mediana** | Es numérica y hay valores extremos (clientes de 90+ años); la mediana no se deja arrastrar por ellos |
+| `Sucursal` con 3.17 % de nulos | Rellenar con la **moda** | Es categórica y solo faltan 2 filas |
+| `Email` con 74.60 % de nulos | **Eliminar la columna** | Un correo no se puede deducir de otras columnas, y el vacío existe porque el gimnasio empezó a pedirlo hace poco |
+| 3 filas duplicadas | `drop_duplicates()` | Se eliminan antes de imputar para no borrar filas por error |
+| `Plan` guardada como `int64` | Convertir a `category` | Sus valores (1 = Básico, 2 = Premium, 3 = VIP) son etiquetas, no cantidades |
 
-Like many real-world datasets, it contains missing values, duplicate records, and a numeric column that represents a category rather than a continuous measurement.
+## 📊 Resultados
 
-The project explores how to identify these issues, clean the data, and justify preprocessing decisions.
+- **63 filas, 7 columnas** → **60 filas, 6 columnas**, sin nulos ni duplicados.
+- Al excluir a los clientes mayores de 85 años, la **media de edad baja** (de 46.50 a 44.05) mientras que la **mediana no cambia** (47). La mediana es más robusta ante valores extremos.
+- Incluye la reflexión final: por qué `Sucursal` y `Email` requieren estrategias distintas y qué precauciones tomar antes de usar estos datos para predecir cancelaciones (variable objetivo, imputación y *data leakage*).
 
-## Objectives
+## 📂 Estructura
 
-- Inspect the dataset's structure and data types.
-- Identify and quantify missing values.
-- Handle missing values according to the meaning and usefulness of each column.
-- Detect and remove duplicate records.
-- Convert the `Plan` column into a categorical data type.
-- Compare the mean and median of customer ages.
-- Analyze how customers older than 85 affect descriptive statistics.
-- Discuss precautions required before using the data for a future machine learning model.
-
-## Project Structure
-
-```text
-gym-data-cleaning-eda/
+```
+gym-data-cleaning/
 ├── data/
-│   ├── clientes_gimnasio.csv
-│   └── clientes_gimnasio_limpio.csv
+│   ├── clientes_gimnasio.csv           # datos originales (63 filas, 7 columnas)
+│   └── clientes_gimnasio_limpio.csv    # resultado final (60 filas, 6 columnas)
 ├── notebooks/
-│   ├── 01_limpieza_datos.ipynb
-│   └── 02_analisis_y_reflexiones.ipynb
-├── .gitignore
-├── README.md
-└── requirements.txt
+│   └── 01_limpieza_datos.ipynb
+├── requirements.txt
+└── README.md
 ```
 
-## Data Cleaning Process
+## 🛠️ Tecnologías
+Python 3 · pandas · Matplotlib · Jupyter
 
-### 1. Initial inspection
-
-Examined the dataset's dimensions, first rows, data types, and general structure.
-
-### 2. Missing values
-
-- **`Edad`:** missing values were filled using the median.
-- **`Sucursal`:** missing values were filled using the most frequent category (mode).
-- **`Email`:** excluded from the analytical dataset because a large proportion of values were missing and the project context explains that email collection started later.
-
-These decisions were made for this exercise and should be reconsidered if the dataset is used for a different business objective.
-
-### 3. Duplicate records
-
-Identified and removed duplicate rows from the dataset.
-
-### 4. Data types
-
-Converted `Plan` into a categorical data type because its values represent membership categories rather than continuous numerical measurements.
-
-### 5. Statistical analysis
-
-Compared the mean and median of customer ages, including all customers and excluding those older than 85 for a separate sensitivity analysis. The older customers were not automatically classified as invalid records.
-
-## Key Questions
-
-- How sensitive are the mean and median to extreme age values?
-- Why should missing values in `Sucursal` and `Email` be treated differently?
-- What precautions are necessary before using customer data to predict membership cancellations?
-
-The findings are documented in the notebooks and should be interpreted using the actual outputs produced by running the analysis.
-
-## Technologies Used
-
-- Python
-- pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Jupyter Notebook
-
-## How to Run the Project
-
-### 1. Clone the repository
+## ▶️ Cómo ejecutarlo
 
 ```bash
-git clone https://github.com/offxcialchris/gym-data-cleaning-eda.git
-cd gym-data-cleaning-eda
+git clone https://github.com/offxcialchris/gym-data-cleaning.git
+cd gym-data-cleaning
+pip install -r requirements.txt
+jupyter notebook notebooks/01_limpieza_datos.ipynb
 ```
 
-### 2. Create a virtual environment
+## ⚠️ Limitaciones
 
-```bash
-python3 -m venv .venv
-```
+- Rellenar edades con la mediana no recupera la edad real de cada cliente y suaviza la distribución.
+- Rellenar sucursales con la moda asume que esos clientes pertenecen a la sede más frecuente.
+- `drop_duplicates()` solo detecta filas **exactamente** iguales.
+- Las edades mayores a 85 se usaron solo para comparar, no como regla de limpieza.
 
-### 3. Activate the environment
-
-On Ubuntu/Linux:
-
-```bash
-source .venv/bin/activate
-```
-
-### 4. Install dependencies
-
-```bash
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-```
-
-### 5. Launch Jupyter Notebook
-
-```bash
-jupyter notebook
-```
-
-Open the notebooks inside the `notebooks/` directory and execute their cells in order.
-
-**Note:** The notebooks expect the CSV files to be available in the `data/` directory. If you change the directory structure, update the file paths accordingly.
-
-## Limitations and Future Improvements
-
-- Validate whether missing branch values should be imputed or investigated further.
-- Reassess the treatment of `Email` if it becomes relevant to a future business question.
-- Investigate unusual age values using domain knowledge rather than removing them automatically.
-- Develop a documented preprocessing pipeline if the dataset is later used for machine learning.
-- Obtain reliable historical cancellation labels before attempting to train a membership-churn prediction model.
-
-## Learning Context
-
-This project originated as an academic exercise in the Talendig training program. It is part of my ongoing learning journey in Python, data analysis, and machine learning.
-
-## Author
-
-**Chris Nelson**
-
-GitHub: [@offxcialchris](https://github.com/offxcialchris)
+## 👤 Autor
+**Chris Nelson** · [@offxcialchris](https://github.com/offxcialchris)
